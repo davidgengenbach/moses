@@ -1,0 +1,4 @@
+exercises/*
+modules/*
+other/*
+!.gitkeep

@@ -45,10 +45,8 @@ def main():
         with open(filename, 'wb') as f:
             f.write(browser.get(link, headers=headers).content)
     # Delete old versions
-    files = glob.glob('**/*.pdf')
+    files = [x for x in glob.glob('**/*.pdf') if 'all.pdf' not in x]
     for file in files:
-        if 'all.pdf' in file:
-            continue
         base, version = get_filedata(file)
         for file_ in files:
             if base in file_ and file is not file_:
@@ -56,6 +54,11 @@ def main():
                 target = file if version < version_ else file_
                 if os.path.exists(target):
                     os.remove(target)
+    # Check validitiy
+    only_filenames = [x.split('/')[-1].replace('.pdf', '') for x in files]
+    only_prefixes = [x.split('-')[0] for x in only_filenames]
+    # Check that there are no two versions of the same file
+    assert(len(only_prefixes) == len(set(only_prefixes)))
 
 
 def get_auth_token(user, password):
